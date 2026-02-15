@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heart Module - 2D to 3D</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial;
+            background: linear-gradient(to right, #ff6a6a, #ffcccc);
+        }
+
+        h1 {
+            margin-top: 30px;
+        }
+
+        .upload-box {
+            margin: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: crimson;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>AI Heart 2D ➜ 3D Reconstruction</h1>
+
+    <div class="upload-box">
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="files" multiple required>
+            <br><br>
+            <button type="submit">Generate 3D Heart</button>
+        </form>
+    </div>
+    <hr>
+
+<h2>Disease Progression Analysis</h2>
+
+<form action="/progression" method="post" enctype="multipart/form-data">
+
+    <h4>Upload Initial Scan (Time 1)</h4>
+    <input type="file" name="t1_files" multiple required>
+
+    <h4>Upload Follow-up Scan (Time 2)</h4>
+    <input type="file" name="t2_files" multiple required>
+
+    <br><br>
+    <button type="submit">Analyze Progression</button>
+</form>
+
+    <div>
+        {{ graph_html|safe }}
+    </div>
+{% if tumor_percentage is defined %}
+<hr>
+<h2>Analysis Report</h2>
+<p><b>Tumor Percentage:</b> {{ tumor_percentage }} %</p>
+<p><b>Severity Level:</b> {{ severity }}</p>
+{% endif %}
+
+</body>
+</html>
+
