@@ -1,0 +1,27 @@
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Runtime upload artifacts
+uploads/*
+!uploads/.gitkeep
+!uploads/brain/.gitkeep
+!uploads/brain_t1/.gitkeep
+!uploads/brain_t2/.gitkeep
+!uploads/t1/.gitkeep
+!uploads/t2/.gitkeep
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Local editor and packaging artifacts
+.vscode/
+*.code-workspace
+*.zip
+
+# Generated slices
+slices/

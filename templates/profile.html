@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} | Profile</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap");
+        :root {
+            --bg: #eef7ff;
+            --paper: #ffffff;
+            --line: #d4e6fa;
+            --text: #223a57;
+            --muted: #607d9d;
+            --orange: #2e8bff;
+            --green: #2563eb;
+            --blue: #2563eb;
+            --shadow: 0 12px 28px rgba(35, 92, 158, 0.12);
+            --radius: 16px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Manrope", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(900px 420px at 18% 0%, rgba(78, 142, 255, 0.14), transparent 70%),
+                radial-gradient(900px 420px at 78% 4%, rgba(67, 168, 255, 0.12), transparent 70%),
+                linear-gradient(180deg, #f5fbff, var(--bg));
+        }
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .particle {
+            position: absolute;
+            opacity: .2;
+            border: 1px solid rgba(166, 214, 255, .45);
+            filter: drop-shadow(0 0 14px rgba(124, 196, 255, .25));
+            animation: floaty 14s ease-in-out infinite;
+        }
+        .brain { width: 120px; height: 120px; border-radius: 50%; top: 14%; right: 10%; background: radial-gradient(circle, rgba(105, 189, 255, .24), rgba(16, 54, 96, .02)); }
+        .heart { width: 90px; height: 90px; border-radius: 45% 45% 55% 55%; top: 34%; left: 8%; background: radial-gradient(circle, rgba(125, 192, 255, .22), rgba(13, 37, 74, .02)); animation-delay: 2s; }
+        .lungs { width: 120px; height: 90px; border-radius: 45%; top: 70%; right: 20%; background: radial-gradient(circle at 35% 50%, rgba(156, 218, 255, .22), transparent 50%), radial-gradient(circle at 65% 50%, rgba(156, 218, 255, .22), transparent 50%); animation-delay: 3s; }
+        .liver { width: 110px; height: 70px; border-radius: 48% 52% 58% 42%; bottom: 12%; left: 16%; background: radial-gradient(circle, rgba(124, 190, 255, .22), rgba(15, 42, 83, .02)); animation-delay: 1s; }
+        @keyframes floaty {
+            0%,100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        .home {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            background: linear-gradient(120deg, #2ea8ff, #2563eb);
+            color: #fff;
+            text-decoration: none;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            box-shadow: var(--shadow);
+        }
+        .wrap {
+            width: min(1250px, calc(100% - 24px));
+            margin: 14px auto 22px;
+            display: grid;
+            gap: 12px;
+        }
+        .box {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .top {
+            padding: 14px;
+            display: grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 12px;
+        }
+        .hero, .doc {
+            border: 1px solid #ebe2d5;
+            border-radius: 13px;
+            padding: 12px;
+            background: #fffdfa;
+        }
+        .hero h1 {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            font-size: clamp(1.25rem, 2.6vw, 2rem);
+            letter-spacing: -0.02em;
+            background: linear-gradient(120deg, #2ea8ff, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { margin: 7px 0 0; color: var(--muted); }
+        .doc h3 { margin: 0 0 7px; font-size: .84rem; text-transform: uppercase; letter-spacing: .08em; color: #7388a0; }
+        .doc p { margin: 3px 0; color: #60748e; font-size: .9rem; }
+        .doc .name { font-weight: 800; margin-bottom: 4px; }
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 9px 11px;
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(120deg, #2ea8ff, #2563eb);
+        }
+
+        .cards {
+            padding: 12px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .card {
+            border: 1px solid #e7ecef;
+            border-radius: 12px;
+            background: #fbfcfd;
+            padding: 10px;
+        }
+        .card h4 {
+            margin: 0 0 6px;
+            font-size: .8rem;
+            text-transform: uppercase;
+            color: #627b95;
+            letter-spacing: .04em;
+        }
+        .value { font-size: 1.28rem; font-weight: 800; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .panel {
+            padding: 12px;
+        }
+        .panel h2 {
+            margin: 0 0 8px;
+            font-family: "Poppins", sans-serif;
+            font-size: 1.04rem;
+        }
+        .tags { display: flex; flex-wrap: wrap; gap: 7px; }
+        .tag {
+            border-radius: 999px;
+            border: 1px solid #dce5ef;
+            background: #f7fbff;
+            color: #486581;
+            padding: 6px 10px;
+            font-size: .84rem;
+        }
+        .list {
+            display: grid;
+            gap: 7px;
+            max-height: 360px;
+            overflow-y: auto;
+        }
+        .item {
+            border: 1px solid #e5edf4;
+            border-radius: 10px;
+            background: #fbfdff;
+            padding: 8px;
+            font-size: .86rem;
+            color: #455f79;
+        }
+        .muted { color: #7187a1; }
+
+        @media (max-width: 1040px) {
+            .top { grid-template-columns: 1fr; }
+            .cards { grid-template-columns: repeat(2, 1fr); }
+            .grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 700px) {
+            .wrap {
+                width: calc(100% - 12px);
+                margin: 8px auto 14px;
+                gap: 8px;
+            }
+            .home {
+                top: 8px;
+                right: 8px;
+                width: 38px;
+                height: 38px;
+                font-size: .86rem;
+            }
+            .top, .cards, .panel {
+                padding: 10px;
+            }
+            .cards {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 1.3rem;
+            }
+            .list {
+                max-height: 260px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles">
+        <div class="particle brain"></div>
+        <div class="particle heart"></div>
+        <div class="particle lungs"></div>
+        <div class="particle liver"></div>
+    </div>
+    <a class="home" href="/" title="Back to Home">H</a>
+    <div class="wrap">
+        <div class="box top">
+            <div class="hero">
+                <h1>Case Intelligence Profile</h1>
+                <p>Doctor-centric case intelligence showing your previous studies, patient-type distribution, and recovery outcomes.</p>
+            </div>
+            <div class="doc">
+                <h3>Doctor Profile</h3>
+                <div class="name">{{ doctor_profile.name }}</div>
+                <p><b>User:</b> {{ doctor_profile.username }}</p>
+                <p><b>Staff ID:</b> {{ doctor_profile.staff_id }}</p>
+                <p><b>Hospital:</b> {{ doctor_profile.hospital }}</p>
+                <form action="/doctor/logout" method="post" style="margin-top:8px;">
+                    <button class="btn" type="submit">Logout</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="box cards">
+            <div class="card"><h4>Total Cases</h4><div class="value">{{ profile_data.total_cases }}</div></div>
+            <div class="card"><h4>Total Patients</h4><div class="value">{{ profile_data.total_patients }}</div></div>
+            <div class="card"><h4>Recovering</h4><div class="value">{{ profile_data.recovering_patients|length }}</div></div>
+            <div class="card"><h4>Recovered</h4><div class="value">{{ profile_data.recovered_patients|length }}</div></div>
+        </div>
+
+        <div class="grid">
+            <div class="box panel">
+                <h2>Patient Type Count</h2>
+                <div class="tags">
+                    {% if profile_data.disease_counts %}
+                        {% for disease, count in profile_data.disease_counts.items() %}
+                            <span class="tag">{{ disease|capitalize }}: {{ count }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="tag">No cases yet</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="box panel">
+                <h2>Recovering Patients</h2>
+                <div class="list">
+                    {% if profile_data.recovering_patients %}
+                        {% for p in profile_data.recovering_patients %}
+                            <div class="item">{{ p }}</div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="item">No recovering patients recorded.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="box panel">
+                <h2>Recovered Patients</h2>
+                <div class="list">
+                    {% if profile_data.recovered_patients %}
+                        {% for p in profile_data.recovered_patients %}
+                            <div class="item">{{ p }}</div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="item">No recovered patients recorded.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="box panel">
+                <h2>Previous Case Studies</h2>
+                <div class="list">
+                    {% if profile_data.case_studies %}
+                        {% for c in profile_data.case_studies %}
+                            <div class="item">
+                                <div><b>{{ c.patient_name }}</b> | {{ c.disease_type|capitalize }} | {{ c.stage|capitalize }}</div>
+                                <div class="muted">Status: {{ c.clinical_status|capitalize }} | {{ c.timestamp }}</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="item">No case studies yet.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

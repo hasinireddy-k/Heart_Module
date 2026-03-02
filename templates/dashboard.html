@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} | Dashboard</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap");
+        :root {
+            --bg: #eef7ff;
+            --paper: #ffffff;
+            --line: #d4e6fa;
+            --text: #223a57;
+            --muted: #607d9d;
+            --orange: #2e8bff;
+            --green: #2563eb;
+            --blue: #2563eb;
+            --shadow: 0 12px 28px rgba(35, 92, 158, 0.12);
+            --radius: 16px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Manrope", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(900px 420px at 18% 0%, rgba(78, 142, 255, 0.14), transparent 70%),
+                radial-gradient(900px 420px at 78% 4%, rgba(67, 168, 255, 0.12), transparent 70%),
+                linear-gradient(180deg, #f5fbff, var(--bg));
+        }
+        .flow-bg::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(0deg, rgba(37, 99, 235, 0.03) 0 2px, transparent 2px 28px),
+                repeating-linear-gradient(90deg, rgba(37, 99, 235, 0.03) 0 2px, transparent 2px 28px);
+        }
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .particle {
+            position: absolute;
+            opacity: .2;
+            border: 1px solid rgba(166, 214, 255, .55);
+            filter: drop-shadow(0 0 14px rgba(124, 196, 255, .25));
+            animation: floaty 14s ease-in-out infinite;
+        }
+        .brain { width: 120px; height: 120px; border-radius: 50%; top: 15%; right: 12%; background: radial-gradient(circle, rgba(105, 189, 255, .26), rgba(16, 54, 96, .02)); }
+        .heart { width: 90px; height: 90px; border-radius: 45% 45% 55% 55%; top: 36%; left: 5%; background: radial-gradient(circle, rgba(125, 192, 255, .22), rgba(13, 37, 74, .02)); animation-delay: 2s; }
+        .lungs { width: 120px; height: 90px; border-radius: 45%; top: 68%; right: 20%; background: radial-gradient(circle at 35% 50%, rgba(156, 218, 255, .22), transparent 50%), radial-gradient(circle at 65% 50%, rgba(156, 218, 255, .22), transparent 50%); animation-delay: 3s; }
+        .liver { width: 110px; height: 70px; border-radius: 48% 52% 58% 42%; bottom: 12%; left: 14%; background: radial-gradient(circle, rgba(124, 190, 255, .22), rgba(15, 42, 83, .02)); animation-delay: 1s; }
+        @keyframes floaty {
+            0%,100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        .profile-icon {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 4;
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            background: linear-gradient(120deg, #2ea8ff, #2563eb);
+            color: #fff;
+            text-decoration: none;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            box-shadow: var(--shadow);
+        }
+        .app {
+            width: min(1280px, calc(100% - 24px));
+            margin: 14px auto 24px;
+            position: relative;
+            z-index: 2;
+            display: grid;
+            gap: 12px;
+        }
+        .nav {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            box-shadow: var(--shadow);
+        }
+        .brand {
+            font-family: "Poppins", sans-serif;
+            font-weight: 800;
+            font-size: 1.35rem;
+            letter-spacing: -0.01em;
+        }
+        .brand .g { background: linear-gradient(120deg, #2ea8ff, #2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-right { display: flex; gap: 8px; }
+        .pill {
+            border: 1px solid rgba(160, 204, 241, 0.55);
+            border-radius: 10px;
+            padding: 8px 10px;
+            background: #f2f8ff;
+            font-size: .86rem;
+            color: #446488;
+        }
+        .hero {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 14px;
+            padding: 18px;
+        }
+        .hero h1 {
+            margin: 0 0 10px;
+            font-family: "Poppins", sans-serif;
+            font-size: clamp(1.45rem, 3.1vw, 2.8rem);
+            line-height: 1.12;
+            letter-spacing: -0.02em;
+            background: linear-gradient(120deg, #2ea8ff, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { margin: 0; color: var(--muted); font-size: 1.02rem; line-height: 1.5; max-width: 780px; }
+        .quick {
+            margin-top: 14px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .q {
+            border-radius: 10px;
+            border: none;
+            color: #fff;
+            padding: 10px 13px;
+            font: inherit;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .q.orange { background: linear-gradient(120deg, #2ea8ff, #2563eb); }
+        .q.green { background: linear-gradient(120deg, #3e8bff, #2b6fe8); }
+        .q.blue { background: linear-gradient(120deg, #2563eb, #4f86ff); }
+        .art {
+            border-radius: 12px;
+            border: 1px solid rgba(151, 196, 241, 0.42);
+            min-height: 220px;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(115, 201, 255, 0.32), transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(157, 205, 255, 0.32), transparent 54%),
+                linear-gradient(135deg, #d9eef8, #e6f3ff);
+            position: relative;
+            overflow: hidden;
+        }
+        .art::before, .art::after {
+            content: "";
+            position: absolute;
+            border-radius: 999px;
+            border: 1px solid rgba(36, 48, 69, 0.12);
+            background: rgba(255, 255, 255, 0.38);
+        }
+        .art::before { width: 120px; height: 80px; top: 42%; left: 18%; }
+        .art::after { width: 90px; height: 64px; top: 25%; right: 20%; }
+
+        .viewer {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 48px 10px 10px;
+            min-height: 70vh;
+            overflow-x: auto;
+            position: relative;
+        }
+        .viewer-tools {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: min(360px, calc(100% - 20px));
+            border-radius: 12px;
+            border: 1px solid #9cc5f6;
+            background: linear-gradient(170deg, #eaf4ff, #dcecff);
+            color: #27486f;
+            padding: 10px;
+            z-index: 2;
+        }
+        .viewer-tools h3 {
+            margin: 0 0 8px;
+            font-family: "Poppins", sans-serif;
+            font-size: .98rem;
+        }
+        .viewer-tools p {
+            margin: 0 0 10px;
+            color: #54779e;
+            font-size: .86rem;
+            line-height: 1.4;
+        }
+        .viewer-tools .tool-form {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .viewer-tools label {
+            color: #3b5f88;
+        }
+        .viewer-tools input {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #9fc2ef;
+            color: #1f3555;
+        }
+        .viewer-tools .btn {
+            background: linear-gradient(120deg, #2ea8ff, #3f7dfa);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .panel {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 12px;
+        }
+        .panel h2 { margin: 0 0 7px; font-family: "Poppins", sans-serif; font-size: 1.06rem; }
+        .panel p { margin: 0 0 10px; color: var(--muted); font-size: .92rem; }
+        .form { display: grid; gap: 8px; }
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        label { font-size: .84rem; font-weight: 700; color: #51657e; }
+        input, select {
+            width: 100%;
+            border: 1px solid #dbe4ef;
+            border-radius: 10px;
+            background: #fff;
+            color: #20344f;
+            padding: 10px;
+            font: inherit;
+            outline: none;
+        }
+        input:focus, select:focus { border-color: #79a8ff; box-shadow: 0 0 0 3px rgba(79, 134, 255, 0.17); }
+        input[type="file"] { border-style: dashed; }
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(120deg, #2ea8ff, #2563eb);
+        }
+        .btn.subtle { background: linear-gradient(120deg, #6b7f98, #8596ab); }
+        .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .card {
+            border: 1px solid #e6ecef;
+            border-radius: 12px;
+            padding: 10px;
+            background: #f9fbfc;
+        }
+        .card h3 {
+            margin: 0 0 6px;
+            font-size: .82rem;
+            text-transform: uppercase;
+            color: #5f768f;
+            letter-spacing: .04em;
+        }
+        .kpi { font-size: 1.25rem; font-weight: 800; }
+        .high { color: #d43d3d; }
+        .mid { color: #cd8b0a; }
+        .low { color: #1c9b53; }
+
+        .status { margin-top: 6px; padding: 8px 10px; border-radius: 10px; font-size: .86rem; font-weight: 700; }
+        .status.error { color: #b42f2f; border: 1px solid #f2bcbc; background: #fff1f1; }
+        .status.ok { color: #157a45; border: 1px solid #b9e6cd; background: #effcf5; }
+
+        .learning {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 12px;
+        }
+        .learning h2 { margin: 0 0 10px; font-family: "Poppins", sans-serif; font-size: 1.08rem; }
+        .resources {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .resource-box {
+            border: 1px solid #e6ecef;
+            border-radius: 12px;
+            background: #fbfdff;
+            padding: 10px;
+        }
+        .resource-box h3 { margin: 0 0 7px; font-size: .92rem; color: #48617e; }
+        .resource-list { display: grid; gap: 6px; }
+        .resource {
+            border: 1px solid #ebeff3;
+            border-radius: 9px;
+            padding: 8px;
+            background: #fff;
+            font-size: .86rem;
+            color: #2a4462;
+        }
+        .resource small {
+            display: block;
+            margin-top: 4px;
+            color: #5c7594;
+        }
+        .resource a { color: #2563eb; text-decoration: none; }
+        .resource a:hover { text-decoration: underline; }
+
+        @media (max-width: 1050px) {
+            .hero { grid-template-columns: 1fr; }
+            .grid { grid-template-columns: 1fr; }
+            .split { grid-template-columns: 1fr; }
+            .resources { grid-template-columns: 1fr; }
+            .viewer {
+                min-height: 54vh;
+                padding-top: 170px;
+            }
+            .viewer-tools {
+                width: calc(100% - 20px);
+            }
+        }
+
+        @media (max-width: 760px) {
+            .app {
+                width: calc(100% - 12px);
+                margin: 8px auto 14px;
+                gap: 8px;
+            }
+            .profile-icon {
+                top: 8px;
+                right: 8px;
+                width: 38px;
+                height: 38px;
+                font-size: .86rem;
+            }
+            .nav {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 10px;
+            }
+            .nav-right {
+                width: 100%;
+            }
+            .pill {
+                width: 100%;
+                text-align: center;
+            }
+            .hero {
+                padding: 12px;
+                gap: 10px;
+            }
+            .hero h1 {
+                font-size: 1.35rem;
+            }
+            .hero p {
+                font-size: .94rem;
+            }
+            .quick {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+            .q {
+                width: 100%;
+                text-align: center;
+                padding: 11px;
+            }
+            .art {
+                min-height: 160px;
+            }
+            .viewer {
+                min-height: 48vh;
+                padding: 8px;
+                overflow-x: hidden;
+            }
+            .viewer-tools {
+                position: static;
+                width: 100%;
+                margin-bottom: 8px;
+            }
+            .panel {
+                padding: 10px;
+            }
+            .cards {
+                grid-template-columns: 1fr;
+            }
+            input, select, .btn {
+                min-height: 42px;
+            }
+            .learning {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body class="flow-bg">
+    <div class="particles">
+        <div class="particle brain"></div>
+        <div class="particle heart"></div>
+        <div class="particle lungs"></div>
+        <div class="particle liver"></div>
+    </div>
+    <a href="/profile" class="profile-icon" title="Profile">P</a>
+
+    <div class="app">
+        <div class="nav">
+            <div class="brand"><span class="g">{{ app_name }}</span> Clinical Companion</div>
+            <div class="nav-right">
+                <div class="pill">{{ doctor_profile.name or 'Doctor' }}</div>
+                <div class="pill">{{ doctor_profile.hospital }}</div>
+            </div>
+        </div>
+
+        <div class="hero">
+            <div>
+                <h1>Transform Routine Scans Into Clinical Insight</h1>
+                <p>Professional imaging workspace with AI diagnosis, progression tracking, full-size 3D clinical output, and physician-ready report export.</p>
+                <div class="quick">
+                    <a class="q orange" href="#intake">Run Diagnosis</a>
+                    <a class="q green" href="#progression">Run Progression</a>
+                    <a class="q blue" href="#learning">Explore Learning</a>
+                </div>
+            </div>
+            <div class="art"></div>
+        </div>
+
+        {% set has_output = heart_graph_html or brain_graph_html or heart_progression_graph_html or brain_progression_graph_html or lung_progression_graph_html or liver_progression_graph_html %}
+        {% if has_output %}
+        <div class="viewer">
+            <aside class="viewer-tools">
+                <h3>Output Actions</h3>
+                <form class="tool-form" action="/report/download" method="get">
+                    <button class="btn" type="submit">Download Report</button>
+                </form>
+                <form class="tool-form" action="/report/export_email" method="post">
+                    <label>Recipient Email</label>
+                    <input type="email" name="recipient_email" value="{{ doctor_profile.email or '' }}" required>
+                    <button class="btn" type="submit">Export to Email</button>
+                </form>
+                {% if export_error is defined %}<div class="status error">{{ export_error }}</div>{% endif %}
+                {% if export_success is defined %}<div class="status ok">{{ export_success }}</div>{% endif %}
+            </aside>
+            {{ heart_graph_html|safe }}
+            {{ brain_graph_html|safe }}
+            {{ heart_progression_graph_html|safe }}
+            {{ brain_progression_graph_html|safe }}
+            {{ lung_progression_graph_html|safe }}
+            {{ liver_progression_graph_html|safe }}
+        </div>
+        {% endif %}
+
+        <div class="grid">
+            <div class="panel" id="intake">
+                <h2>Unified Disease Intake</h2>
+                <form class="form" action="/analyze" method="post" enctype="multipart/form-data">
+                    <div class="split">
+                        <div><label>Patient Name</label><input type="text" name="patient_name" required></div>
+                        <div>
+                            <label>Disease Type</label>
+                            <select name="disease_type" required>
+                                <option value="heart" {% if selected_disease == 'heart' %}selected{% endif %}>Heart</option>
+                                <option value="brain" {% if selected_disease == 'brain' %}selected{% endif %}>Brain</option>
+                                <option value="lung" {% if selected_disease == 'lung' %}selected{% endif %}>Lung</option>
+                                <option value="liver" {% if selected_disease == 'liver' %}selected{% endif %}>Liver</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="split">
+                        <div>
+                            <label>Patient Status</label>
+                            <select name="clinical_status" required>
+                                <option value="recovering">Recovering</option>
+                                <option value="recovered">Recovered</option>
+                            </select>
+                        </div>
+                        <div><label>Files</label><input type="file" name="disease_files" multiple required></div>
+                    </div>
+                    <button class="btn" type="submit">Run AI Diagnosis</button>
+                </form>
+                {% if result_error is defined %}<div class="status error">{{ result_error }}</div>{% endif %}
+            </div>
+
+            <div class="panel">
+                <h2>Insight Cards</h2>
+                <div class="cards">
+                    <div class="card"><h3>Heart Risk Score</h3><div class="kpi {% if heart_tumor_percentage is defined and heart_tumor_percentage > 60 %}high{% elif heart_tumor_percentage is defined and heart_tumor_percentage > 35 %}mid{% else %}low{% endif %}">{% if heart_tumor_percentage is defined %}{{ heart_tumor_percentage }} / 100{% else %}No Data{% endif %}</div></div>
+                    <div class="card"><h3>Brain Risk Score</h3><div class="kpi {% if brain_risk_score is defined and brain_risk_score > 60 %}high{% elif brain_risk_score is defined and brain_risk_score > 35 %}mid{% else %}low{% endif %}">{% if brain_risk_score is defined %}{{ brain_risk_score }} / 100{% else %}No Data{% endif %}</div></div>
+                    <div class="card"><h3>Lung Risk Score</h3><div class="kpi {% if lung_risk_score is defined and lung_risk_score > 60 %}high{% elif lung_risk_score is defined and lung_risk_score > 35 %}mid{% else %}low{% endif %}">{% if lung_risk_score is defined %}{{ lung_risk_score }} / 100{% else %}No Data{% endif %}</div></div>
+                    <div class="card"><h3>Liver Risk Score</h3><div class="kpi {% if liver_risk_score is defined and liver_risk_score > 60 %}high{% elif liver_risk_score is defined and liver_risk_score > 35 %}mid{% else %}low{% endif %}">{% if liver_risk_score is defined %}{{ liver_risk_score }} / 100{% else %}No Data{% endif %}</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" id="progression">
+                <h2>Progression Studio</h2>
+                <form class="form" action="/progression/run" method="post" enctype="multipart/form-data">
+                    <div class="split">
+                        <div><label>Patient Name</label><input type="text" name="progression_patient_name" required></div>
+                        <div>
+                            <label>Progression Type</label>
+                            <select name="progression_disease_type" required>
+                                <option value="heart" {% if progression_selected_disease == 'heart' %}selected{% endif %}>Heart</option>
+                                <option value="brain" {% if progression_selected_disease == 'brain' %}selected{% endif %}>Brain</option>
+                                <option value="lung" {% if progression_selected_disease == 'lung' %}selected{% endif %}>Lung</option>
+                                <option value="liver" {% if progression_selected_disease == 'liver' %}selected{% endif %}>Liver</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="split">
+                        <div><label>Patient Status</label><select name="progression_status" required><option value="recovering">Recovering</option><option value="recovered">Recovered</option></select></div>
+                        <div><label>Interval Value (Optional, Brain)</label><input type="number" name="interval_value" min="1" value="1"></div>
+                    </div>
+                    <div class="split">
+                        <div><label>T1 Files</label><input type="file" name="t1_files" multiple required></div>
+                        <div><label>T2 Files</label><input type="file" name="t2_files" multiple required></div>
+                    </div>
+                    <div><label>Interval Unit (Optional, Brain)</label><select name="interval_unit"><option value="week">Week(s)</option><option value="month">Month(s)</option></select></div>
+                    <button class="btn" type="submit">Run Progression</button>
+                </form>
+                {% if progression_error is defined %}<div class="status error">{{ progression_error }}</div>{% endif %}
+        </div>
+
+        <div class="learning" id="learning">
+            <h2>Related Videos & Books</h2>
+            <div class="resources">
+                <div class="resource-box">
+                    <h3>Curated Videos</h3>
+                    <div class="resource-list">
+                        <div class="resource">
+                            <b>3D Radiology Reconstruction Masterclass</b><br>
+                            <a href="https://www.youtube.com/results?search_query=radiology+3d+reconstruction+tutorial">Watch videos</a>
+                            <small>Why watch: sharpens scan-to-model interpretation and contour understanding.</small>
+                        </div>
+                        <div class="resource">
+                            <b>Brain MRI Tumor Pattern Bootcamp</b><br>
+                            <a href="https://www.youtube.com/results?search_query=brain+tumor+mri+radiology+teaching+cases">Watch videos</a>
+                            <small>Why watch: teaches high-yield lesion pattern recognition from real cases.</small>
+                        </div>
+                        <div class="resource">
+                            <b>Chest CT Rapid Reporting Series</b><br>
+                            <a href="https://www.youtube.com/results?search_query=lung+ct+reporting+radiology+cases">Watch videos</a>
+                            <small>Why watch: improves lung and mediastinal finding confidence.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="resource-box">
+                    <h3>Books & Reading</h3>
+                    <div class="resource-list">
+                        <div class="resource">
+                            <b>Grainger & Allison's Diagnostic Radiology</b><br>
+                            <small>Gold-standard multi-volume reference for advanced imaging practice.</small>
+                        </div>
+                        <div class="resource">
+                            <b>Fundamentals of Body CT</b><br>
+                            <small>Practical framework for chest/abdomen/pelvis CT interpretation.</small>
+                        </div>
+                        <div class="resource">
+                            <b>Learning Radiology</b><br>
+                            <small>Fast pattern-based approach for day-to-day diagnostic accuracy.</small>
+                        </div>
+                        <div class="resource">
+                            <b>Latest PubMed Imaging Papers</b><br>
+                            <a href="https://pubmed.ncbi.nlm.nih.gov/?term=medical+imaging+diagnosis">Read latest studies</a>
+                            <small>Stay current with evidence-backed model and imaging updates.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

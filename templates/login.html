@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} | Login</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap");
+        :root {
+            --bg0: #f5faff;
+            --bg1: #eaf4ff;
+            --panel: rgba(255, 255, 255, 0.88);
+            --line: rgba(153, 189, 226, 0.45);
+            --text: #22324a;
+            --muted: #5f7694;
+            --primary: #2ea8ff;
+            --primary2: #1f6de4;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Manrope", sans-serif;
+            color: var(--text);
+            background: linear-gradient(155deg, var(--bg0), var(--bg1));
+            overflow: hidden;
+        }
+        .scan-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(0deg, rgba(173, 213, 244, 0.05) 0 2px, transparent 2px 24px),
+                repeating-linear-gradient(90deg, rgba(173, 213, 244, 0.04) 0 2px, transparent 2px 22px),
+                radial-gradient(700px 420px at 15% 25%, rgba(73, 151, 255, 0.16), transparent 70%),
+                radial-gradient(700px 420px at 85% 75%, rgba(91, 220, 255, 0.12), transparent 72%);
+        }
+        .organ {
+            position: fixed;
+            border: 1px solid rgba(170, 218, 255, 0.5);
+            opacity: .24;
+            filter: drop-shadow(0 0 18px rgba(118, 198, 255, 0.3));
+            pointer-events: none;
+        }
+        .brain { top: 8%; right: 8%; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(72, 169, 255, .26), rgba(9, 33, 66, .04)); }
+        .heart { left: 8%; top: 24%; width: 140px; height: 140px; border-radius: 46% 46% 54% 54%; background: radial-gradient(circle, rgba(137, 187, 255, .28), rgba(20, 44, 87, .05)); }
+        .lungs { right: 30%; bottom: 8%; width: 210px; height: 160px; border-radius: 45%; background: radial-gradient(circle at 35% 50%, rgba(150, 216, 255, .28), transparent 48%), radial-gradient(circle at 65% 50%, rgba(150, 216, 255, .28), transparent 48%); }
+        .wrap {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 14px;
+            position: relative;
+            z-index: 2;
+        }
+        .card {
+            width: min(930px, 100%);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--panel);
+            backdrop-filter: blur(12px);
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 14px;
+            padding: 16px;
+            box-shadow: 0 22px 48px rgba(28, 67, 118, 0.18);
+        }
+        .brand {
+            border: 1px solid rgba(164, 210, 240, 0.45);
+            border-radius: 14px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(44, 155, 255, .12), rgba(18, 67, 159, .08));
+        }
+        .brand h1 { margin: 0 0 8px; font-family: "Outfit", sans-serif; font-size: 1.9rem; }
+        .brand p { margin: 0; color: var(--muted); line-height: 1.5; }
+        .chip { display:inline-block; margin-bottom:10px; padding:6px 10px; border-radius:999px; border:1px solid rgba(123,184,236,.5); font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#2f5f91; background:#f1f8ff; }
+        .form { display:grid; gap:8px; align-content:center; }
+        .switch { display:flex; gap:8px; margin-bottom:6px; }
+        .sbtn { flex:1; border:1px solid rgba(154,205,240,.45); border-radius:10px; background:rgba(123,177,216,.12); color:#2d5d8f; padding:9px; font:inherit; font-weight:700; cursor:pointer; }
+        .sbtn.active { background:linear-gradient(120deg, rgba(46,168,255,.3), rgba(31,109,228,.28)); border-color:rgba(92,183,255,.72); }
+        label { font-size:.84rem; font-weight:700; color:#4f6e8f; }
+        input { width:100%; border-radius:10px; border:1px solid rgba(153,198,231,.5); background:#fff; color:var(--text); padding:10px 11px; font:inherit; outline:none; }
+        input:focus { border-color: rgba(75,181,255,.78); box-shadow:0 0 0 3px rgba(47,154,255,.18); }
+        .btn { border:none; border-radius:11px; padding:11px 12px; color:#fff; font:inherit; font-weight:700; cursor:pointer; background:linear-gradient(120deg, var(--primary), var(--primary2)); }
+        .extra-fields { display:none; gap:8px; }
+        .status { margin-top:6px; border-radius:10px; padding:9px 10px; font-weight:700; font-size:.88rem; color:#ffd6d6; border:1px solid rgba(255,126,126,.46); background:rgba(140,31,31,.34); }
+        @media (max-width: 900px) { .card { grid-template-columns: 1fr; } }
+        @media (max-width: 640px) {
+            .wrap { padding: 8px; }
+            .card { padding: 10px; gap: 10px; }
+            .brand h1 { font-size: 1.5rem; }
+            .switch { grid-template-columns: 1fr 1fr; }
+            .sbtn { min-height: 40px; }
+            input, .btn { min-height: 42px; }
+            .organ { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scan-bg"></div>
+    <div class="organ brain"></div>
+    <div class="organ heart"></div>
+    <div class="organ lungs"></div>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="brand">
+                <span class="chip">Clinical Access</span>
+                <h1>{{ app_name }}</h1>
+                <p>Clean medical gateway with CT/MRI ambience and secure clinician identity flow.</p>
+            </div>
+            <form class="form" action="/doctor/login" method="post">
+                <input type="hidden" name="auth_mode" id="authMode" value="login">
+                <div class="switch">
+                    <button type="button" class="sbtn active" data-mode="login">Login</button>
+                    <button type="button" class="sbtn" data-mode="register">Register</button>
+                </div>
+                <div id="registerFields" class="extra-fields">
+                    <div>
+                        <label>Doctor Name</label>
+                        <input type="text" name="doctor_name" id="doctorName">
+                    </div>
+                    <div>
+                        <label>Staff ID</label>
+                        <input type="text" name="staff_id" id="staffId">
+                    </div>
+                    <div>
+                        <label>Hospital Name</label>
+                        <input type="text" name="hospital_name" id="hospitalName">
+                    </div>
+                    <div>
+                        <label>Email</label>
+                        <input type="email" name="doctor_email" id="doctorEmail">
+                    </div>
+                </div>
+                <div>
+                    <label>Username</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button class="btn" type="submit" id="submitBtn">Secure Login</button>
+                {% if login_error is defined %}
+                    <div class="status">{{ login_error }}</div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var buttons = document.querySelectorAll(".sbtn");
+            var modeInput = document.getElementById("authMode");
+            var registerFields = document.getElementById("registerFields");
+            var submitBtn = document.getElementById("submitBtn");
+            var registerIds = ["doctorName", "staffId", "hospitalName", "doctorEmail"];
+
+            function setMode(mode) {
+                modeInput.value = mode;
+                buttons.forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-mode") === mode); });
+                var isRegister = mode === "register";
+                registerFields.style.display = isRegister ? "grid" : "none";
+                submitBtn.textContent = isRegister ? "Create Account" : "Secure Login";
+                registerIds.forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (!el) return;
+                    el.required = isRegister;
+                });
+            }
+
+            buttons.forEach(function (btn) {
+                btn.addEventListener("click", function () { setMode(btn.getAttribute("data-mode")); });
+            });
+            setMode("login");
+        })();
+    </script>
+</body>
+</html>

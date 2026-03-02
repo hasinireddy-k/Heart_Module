@@ -1,72 +1,730 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Heart Module - 2D to 3D</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }}</title>
     <style>
+        @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap");
+
+        :root {
+            --bg0: #070d19;
+            --bg1: #0e1930;
+            --bg2: #102445;
+            --panel: rgba(15, 28, 52, 0.72);
+            --line: rgba(156, 200, 236, 0.35);
+            --text: #eaf3ff;
+            --muted: #97b5d5;
+            --primary: #2ba9ff;
+            --primary2: #1870e8;
+            --ok: #5be0a1;
+            --error: #ff7b7b;
+            --warn: #ffca69;
+            --radius: 18px;
+            --shadow: 0 22px 54px rgba(0, 0, 0, 0.4);
+        }
+
+        * { box-sizing: border-box; }
         body {
-            text-align: center;
-            font-family: Arial;
-            background: linear-gradient(to right, #ff6a6a, #ffcccc);
+            margin: 0;
+            font-family: "Manrope", sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            background:
+                radial-gradient(1200px 760px at 88% -25%, rgba(33, 126, 255, 0.35), transparent 68%),
+                radial-gradient(980px 720px at 0% 100%, rgba(0, 219, 255, 0.2), transparent 62%),
+                linear-gradient(160deg, var(--bg0) 0%, var(--bg1) 44%, var(--bg2) 100%);
+            overflow-x: hidden;
         }
 
-        h1 {
-            margin-top: 30px;
+        .organs-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        .upload-box {
-            margin: 30px;
-            padding: 20px;
-            background: white;
+        .organ {
+            position: absolute;
+            filter: drop-shadow(0 0 18px rgba(102, 187, 255, 0.25));
+            opacity: 0.22;
+        }
+
+        .organ.brain {
+            top: 8%;
+            right: 6%;
+            width: 260px;
+            height: 260px;
+            border-radius: 48% 52% 50% 50%;
+            border: 1px solid rgba(163, 219, 255, 0.55);
+            background:
+                repeating-radial-gradient(circle, rgba(156, 220, 255, 0.2) 0 2px, transparent 2px 7px),
+                radial-gradient(circle, rgba(68, 165, 255, 0.28), rgba(12, 32, 71, 0.08));
+            animation: floatA 14s ease-in-out infinite;
+        }
+
+        .organ.heart {
+            left: 5%;
+            top: 28%;
+            width: 180px;
+            height: 180px;
+            border-radius: 45% 45% 55% 55%;
+            border: 1px solid rgba(255, 155, 155, 0.55);
+            background:
+                radial-gradient(circle at 40% 30%, rgba(255, 152, 152, 0.3), transparent 55%),
+                radial-gradient(circle at 58% 68%, rgba(255, 95, 123, 0.3), rgba(67, 22, 40, 0.08));
+            animation: floatB 16s ease-in-out infinite;
+        }
+
+        .organ.lungs {
+            right: 30%;
+            bottom: 10%;
+            width: 240px;
+            height: 200px;
+            border-radius: 45%;
+            border: 1px solid rgba(175, 217, 255, 0.5);
+            background:
+                radial-gradient(circle at 35% 50%, rgba(163, 220, 255, 0.28), transparent 44%),
+                radial-gradient(circle at 66% 50%, rgba(145, 205, 255, 0.28), transparent 44%),
+                radial-gradient(circle at 50% 30%, rgba(64, 154, 255, 0.2), rgba(13, 35, 78, 0.08));
+            animation: floatA 18s ease-in-out infinite;
+        }
+
+        @keyframes floatA {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        @keyframes floatB {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(10px) rotate(-2deg); }
+        }
+
+        .app-shell {
+            width: min(1360px, calc(100% - 24px));
+            margin: 14px auto 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .glass {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .mobile-nav {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-family: "Outfit", sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            font-size: 1.25rem;
+        }
+
+        .nav-icons { display: flex; gap: 8px; }
+        .nav-icon {
+            width: 34px;
+            height: 34px;
             border-radius: 10px;
-            display: inline-block;
+            border: 1px solid rgba(162, 208, 241, 0.34);
+            display: grid;
+            place-items: center;
+            color: #cfe5ff;
+            background: rgba(123, 175, 224, 0.14);
+            font-size: 0.92rem;
         }
 
-        button {
-            padding: 10px 20px;
-            background-color: crimson;
-            color: white;
+        .login-wrap {
+            min-height: calc(100vh - 72px);
+            display: grid;
+            place-items: center;
+        }
+
+        .login-card {
+            width: min(980px, 100%);
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 16px;
+            padding: 18px;
+        }
+
+        .gateway {
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid rgba(130, 192, 238, 0.4);
+            background:
+                linear-gradient(135deg, rgba(42, 152, 255, 0.22), rgba(17, 64, 170, 0.18)),
+                rgba(8, 18, 36, 0.58);
+        }
+
+        .tag {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 6px 10px;
+            border: 1px solid rgba(167, 218, 255, 0.4);
+            background: rgba(125, 182, 255, 0.15);
+            color: #d6ecff;
+            font-size: .78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 12px;
+        }
+
+        .gateway h1 {
+            margin: 0 0 7px;
+            font-family: "Outfit", sans-serif;
+            font-size: 2rem;
+        }
+
+        .gateway p { margin: 0; color: var(--muted); line-height: 1.5; }
+
+        .auth-switch {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .auth-btn {
+            flex: 1;
+            border-radius: 10px;
+            border: 1px solid rgba(165, 211, 245, 0.35);
+            background: rgba(142, 194, 241, 0.1);
+            color: #cbe4ff;
+            padding: 9px 10px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .auth-btn.active {
+            background: linear-gradient(120deg, rgba(43, 169, 255, 0.35), rgba(24, 112, 232, 0.3));
+            border-color: rgba(82, 177, 255, 0.7);
+        }
+
+        .form {
+            display: grid;
+            gap: 9px;
+            align-content: center;
+        }
+        label { font-size: .85rem; font-weight: 700; color: #bed8f1; }
+        input, select {
+            width: 100%;
+            border-radius: 11px;
+            border: 1px solid rgba(152, 198, 232, 0.4);
+            padding: 10px 12px;
+            background: rgba(220, 239, 255, 0.07);
+            color: var(--text);
+            font: inherit;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: rgba(73, 178, 255, 0.75);
+            box-shadow: 0 0 0 3px rgba(38, 150, 255, 0.2);
+        }
+        input[type="file"] {
+            border-style: dashed;
+            background: rgba(180, 219, 247, 0.05);
+        }
+
+        .btn {
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
+            padding: 11px 14px;
+            font: inherit;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            background: linear-gradient(120deg, var(--primary), var(--primary2));
+            box-shadow: 0 10px 22px rgba(31, 124, 245, 0.35);
+        }
+        .btn.alt {
+            background: linear-gradient(120deg, #708caf, #556d8e);
+            box-shadow: none;
+        }
+        .btn.inline {
+            width: auto;
+            padding: 9px 11px;
+            font-size: .86rem;
+        }
+
+        .status {
+            margin-top: 8px;
+            border-radius: 10px;
+            padding: 9px 11px;
+            font-weight: 700;
+            font-size: .88rem;
+        }
+        .status.error {
+            color: #ffd5d5;
+            border: 1px solid rgba(255, 122, 122, 0.48);
+            background: rgba(136, 26, 26, 0.35);
+        }
+        .status.ok {
+            color: #d3ffe6;
+            border: 1px solid rgba(106, 232, 176, 0.48);
+            background: rgba(24, 117, 74, 0.32);
+        }
+
+        .dashboard {
+            display: grid;
+            gap: 11px;
+        }
+
+        .headline {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 11px;
+        }
+
+        .hero, .profile {
+            padding: 13px;
+            border-radius: 14px;
+        }
+        .hero h1 {
+            margin: 0;
+            font-family: "Outfit", sans-serif;
+            font-size: clamp(1.2rem, 2.6vw, 1.95rem);
+            letter-spacing: -0.02em;
+        }
+        .hero p { margin: 6px 0 0; color: var(--muted); }
+
+        .profile h3 {
+            margin: 0 0 7px;
+            font-size: .84rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #a4c3df;
+        }
+        .profile .name { font-weight: 800; margin-bottom: 6px; }
+        .profile p { margin: 3px 0; font-size: .9rem; color: #aac6df; }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1.25fr .75fr;
+            gap: 11px;
+        }
+        .left, .right { display: grid; gap: 11px; }
+
+        .panel {
+            padding: 12px;
+            border-radius: 14px;
+        }
+        .panel h2 {
+            margin: 0 0 6px;
+            font-family: "Outfit", sans-serif;
+            font-size: 1.02rem;
+        }
+        .panel p {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .viz-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .viz-stage {
+            min-height: 340px;
+            border-radius: 12px;
+            border: 1px solid rgba(141, 194, 233, 0.34);
+            padding: 9px;
+            background: radial-gradient(circle at 18% 10%, rgba(42, 145, 255, 0.16), rgba(6, 18, 37, 0.36) 72%);
+            overflow-x: auto;
+        }
+
+        .viz-stage:-webkit-full-screen,
+        .viz-stage:fullscreen {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            border-radius: 0;
+            padding: 18px;
+            background: #050c1a;
+        }
+
+        .widget-grid { display: grid; gap: 9px; }
+        .widget {
+            border-radius: 11px;
+            border: 1px solid rgba(141, 193, 232, 0.32);
+            padding: 10px;
+            background: rgba(40, 64, 95, 0.34);
+        }
+        .widget h3 {
+            margin: 0 0 7px;
+            font-size: .84rem;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: #c0daef;
+        }
+        .kpi { font-size: 1.2rem; font-weight: 800; }
+        .kpi.high { color: #ffd1d1; }
+        .kpi.mid { color: #ffe8bd; }
+        .kpi.low { color: #cbffe3; }
+
+        .history-list {
+            display: grid;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .history-item {
+            border-radius: 10px;
+            border: 1px solid rgba(136, 189, 230, 0.3);
+            background: rgba(44, 70, 104, 0.32);
+            padding: 8px;
+            font-size: .86rem;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+        }
+        .metric {
+            border-radius: 10px;
+            border: 1px solid rgba(143, 194, 232, 0.3);
+            background: rgba(43, 68, 98, 0.34);
+            padding: 8px;
+            font-size: .88rem;
+        }
+        .metric b { color: #cce7ff; }
+
+        @media (max-width: 1080px) {
+            .login-card { grid-template-columns: 1fr; }
+            .headline { grid-template-columns: 1fr; }
+            .content { grid-template-columns: 1fr; }
+            .split { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-
-    <h1>AI Heart 2D ➜ 3D Reconstruction</h1>
-
-    <div class="upload-box">
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="files" multiple required>
-            <br><br>
-            <button type="submit">Generate 3D Heart</button>
-        </form>
+    <div class="organs-bg">
+        <div class="organ brain"></div>
+        <div class="organ heart"></div>
+        <div class="organ lungs"></div>
     </div>
-    <hr>
 
-<h2>Disease Progression Analysis</h2>
+    <div class="app-shell">
+        <div class="mobile-nav glass">
+            <div class="brand">{{ app_name }}</div>
+            <div class="nav-icons">
+                <div class="nav-icon">AI</div>
+                <div class="nav-icon">3D</div>
+                <div class="nav-icon">MD</div>
+            </div>
+        </div>
 
-<form action="/progression" method="post" enctype="multipart/form-data">
+        {% if not is_authenticated %}
+            <div class="login-wrap">
+                <div class="login-card glass">
+                    <div class="gateway">
+                        <span class="tag">Clinical Gateway</span>
+                        <h1>Secure Login + Register</h1>
+                        <p>Access your hospital workspace with registration-ready credentials and staff profile metadata.</p>
+                        <p style="margin-top:12px;color:#c4ddf6;">Default admin login: <b>doctor / doctor123</b></p>
+                    </div>
+                    <form class="form" action="/doctor/login" method="post" id="authForm">
+                        <input type="hidden" name="auth_mode" id="authMode" value="login">
+                        <div class="auth-switch">
+                            <button class="auth-btn active" type="button" data-mode="login">Login</button>
+                            <button class="auth-btn" type="button" data-mode="register">Register</button>
+                        </div>
+                        <label>Doctor Name</label>
+                        <input type="text" name="doctor_name" placeholder="Dr. Anika Sharma" required>
+                        <label>Staff ID</label>
+                        <input type="text" name="staff_id" placeholder="HSP-STAFF-1022" required>
+                        <label>Hospital Name</label>
+                        <input type="text" name="hospital_name" placeholder="Apollo Medical Center" required>
+                        <label>Email (for report export)</label>
+                        <input type="email" name="doctor_email" placeholder="doctor@hospital.com">
+                        <label>Username</label>
+                        <input type="text" name="username" placeholder="doctor" required>
+                        <label>Password</label>
+                        <input type="password" name="password" placeholder="Password" required>
+                        <button class="btn" type="submit" id="authSubmitBtn">Secure Login</button>
+                        {% if login_error is defined %}
+                            <div class="status error">{{ login_error }}</div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="dashboard">
+                <div class="headline">
+                    <div class="hero glass">
+                        <h1>Clinical Reconstruction Workstation</h1>
+                        <p>App-style diagnostic flow with unified upload, improved 2D-to-3D rendering, full-screen viewer, and one-click email export.</p>
+                    </div>
+                    <div class="profile glass">
+                        <h3>Doctor Profile</h3>
+                        <div class="name">{{ doctor_profile.name }}</div>
+                        <p><b>User:</b> {{ doctor_profile.username }}</p>
+                        <p><b>Staff ID:</b> {{ doctor_profile.staff_id }}</p>
+                        <p><b>Hospital:</b> {{ doctor_profile.hospital }}</p>
+                        <p><b>Email:</b> {{ doctor_profile.email or 'Not set' }}</p>
+                        <p><b>Last Login:</b> {{ doctor_profile.last_login }}</p>
+                        <form action="/doctor/logout" method="post" style="margin-top:8px;">
+                            <button class="btn alt inline" type="submit">Logout</button>
+                        </form>
+                    </div>
+                </div>
 
-    <h4>Upload Initial Scan (Time 1)</h4>
-    <input type="file" name="t1_files" multiple required>
+                <div class="content">
+                    <div class="left">
+                        <div class="panel glass">
+                            <h2>Unified Disease Intake</h2>
+                            <p>Select disease, upload files, and run AI diagnosis in one app panel.</p>
+                            <form class="form" action="/analyze" method="post" enctype="multipart/form-data">
+                                <div class="split">
+                                    <div>
+                                        <label>Patient Name</label>
+                                        <input type="text" name="patient_name" required>
+                                    </div>
+                                    <div>
+                                        <label>Disease Type</label>
+                                        <select name="disease_type" required>
+                                            <option value="heart" {% if selected_disease == 'heart' %}selected{% endif %}>Heart</option>
+                                            <option value="brain" {% if selected_disease == 'brain' %}selected{% endif %}>Brain</option>
+                                            <option value="lung" {% if selected_disease == 'lung' %}selected{% endif %}>Lung</option>
+                                            <option value="liver" {% if selected_disease == 'liver' %}selected{% endif %}>Liver</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <label>Diagnostic Files</label>
+                                <input type="file" name="disease_files" multiple required>
+                                <button class="btn" type="submit">Run AI Diagnosis</button>
+                            </form>
+                            {% if result_error is defined %}
+                                <div class="status error">{{ result_error }}</div>
+                            {% endif %}
+                        </div>
 
-    <h4>Upload Follow-up Scan (Time 2)</h4>
-    <input type="file" name="t2_files" multiple required>
+                        <div class="panel glass">
+                            <h2>2D-to-3D Reconstruction Viewer</h2>
+                            <div class="viz-toolbar">
+                                <button class="btn inline" type="button" id="fullscreenBtn">Full Screen Output</button>
+                            </div>
+                            <div class="viz-stage" id="vizStage">
+                                {{ heart_graph_html|safe }}
+                                {{ brain_graph_html|safe }}
+                                {{ heart_progression_graph_html|safe }}
+                                {{ brain_progression_graph_html|safe }}
+                            </div>
+                        </div>
 
-    <br><br>
-    <button type="submit">Analyze Progression</button>
-</form>
+                        <div class="panel glass">
+                            <h2>Progression Studio</h2>
+                            <p>Separate T1/T2 progression analysis with disease selector.</p>
+                            <form class="form" action="/progression/run" method="post" enctype="multipart/form-data">
+                                <div class="split">
+                                    <div>
+                                        <label>Patient Name</label>
+                                        <input type="text" name="progression_patient_name" required>
+                                    </div>
+                                    <div>
+                                        <label>Progression Type</label>
+                                        <select name="progression_disease_type" required>
+                                            <option value="heart" {% if progression_selected_disease == 'heart' %}selected{% endif %}>Heart</option>
+                                            <option value="brain" {% if progression_selected_disease == 'brain' %}selected{% endif %}>Brain</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="split">
+                                    <div>
+                                        <label>T1 Files</label>
+                                        <input type="file" name="t1_files" multiple required>
+                                    </div>
+                                    <div>
+                                        <label>T2 Files</label>
+                                        <input type="file" name="t2_files" multiple required>
+                                    </div>
+                                </div>
+                                <div class="split">
+                                    <div>
+                                        <label>Interval Value (Brain)</label>
+                                        <input type="number" name="interval_value" min="1" value="1">
+                                    </div>
+                                    <div>
+                                        <label>Interval Unit (Brain)</label>
+                                        <select name="interval_unit">
+                                            <option value="week">Week(s)</option>
+                                            <option value="month">Month(s)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button class="btn" type="submit">Run Progression</button>
+                            </form>
+                            {% if progression_error is defined %}
+                                <div class="status error">{{ progression_error }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
 
-    <div>
-        {{ graph_html|safe }}
+                    <div class="right">
+                        <div class="panel glass">
+                            <h2>Interactive Insight Cards</h2>
+                            <div class="widget-grid">
+                                <div class="widget">
+                                    <h3>Heart Severity</h3>
+                                    <div class="kpi {% if heart_tumor_percentage is defined and heart_tumor_percentage > 40 %}high{% elif heart_tumor_percentage is defined and heart_tumor_percentage > 20 %}mid{% else %}low{% endif %}">
+                                        {% if heart_tumor_percentage is defined %}{{ heart_tumor_percentage }} %{% else %}No Data{% endif %}
+                                    </div>
+                                </div>
+                                <div class="widget">
+                                    <h3>Brain Prediction</h3>
+                                    <div class="kpi {% if brain_prediction is defined and brain_prediction == 'Tumor Detected' %}high{% elif brain_prediction is defined %}low{% else %}mid{% endif %}">
+                                        {% if brain_prediction is defined %}{{ brain_prediction }}{% else %}No Data{% endif %}
+                                    </div>
+                                </div>
+                                <div class="widget">
+                                    <h3>Lung Risk</h3>
+                                    <div class="kpi {% if lung_risk_score is defined and lung_risk_score > 60 %}high{% elif lung_risk_score is defined and lung_risk_score > 35 %}mid{% else %}low{% endif %}">
+                                        {% if lung_risk_score is defined %}{{ lung_risk_score }} / 100{% else %}No Data{% endif %}
+                                    </div>
+                                </div>
+                                <div class="widget">
+                                    <h3>Liver Risk</h3>
+                                    <div class="kpi {% if liver_risk_score is defined and liver_risk_score > 60 %}high{% elif liver_risk_score is defined and liver_risk_score > 35 %}mid{% else %}low{% endif %}">
+                                        {% if liver_risk_score is defined %}{{ liver_risk_score }} / 100{% else %}No Data{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel glass">
+                            <h2>Email Export</h2>
+                            <p>Send current report to any clinical mailbox.</p>
+                            <form class="form" action="/report/export_email" method="post">
+                                <label>Recipient Email</label>
+                                <input type="email" name="recipient_email" value="{{ doctor_profile.email or '' }}" required>
+                                <button class="btn" type="submit">Send / Export</button>
+                            </form>
+                            {% if export_error is defined %}
+                                <div class="status error">{{ export_error }}</div>
+                            {% endif %}
+                            {% if export_success is defined %}
+                                <div class="status ok">{{ export_success }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="panel glass">
+                            <h2>Patient Registry</h2>
+                            <div class="history-list">
+                                {% if patient_history %}
+                                    {% for item in patient_history %}
+                                        <div class="history-item">
+                                            <div><b>{{ item.patient_name }}</b></div>
+                                            <div style="color:#aac7e2;">{{ item.disease_type|capitalize }} | {{ item.stage|capitalize }}</div>
+                                            <div style="color:#8eaeca;">{{ item.timestamp }}</div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="history-item">No patient records available yet.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if heart_tumor_percentage is defined %}
+                <div class="panel glass">
+                    <h2>Heart Report</h2>
+                    <div class="metrics">
+                        <div class="metric"><b>Tumor Percentage:</b> {{ heart_tumor_percentage }} %</div>
+                        <div class="metric"><b>Severity:</b> {{ heart_severity }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if brain_prediction is defined %}
+                <div class="panel glass">
+                    <h2>Brain Report</h2>
+                    <div class="metrics">
+                        <div class="metric"><b>Prediction:</b> {{ brain_prediction }}</div>
+                        <div class="metric"><b>Confidence:</b> {{ brain_confidence }} %</div>
+                        <div class="metric"><b>Tumor Burden:</b> {{ brain_tumor_burden }} %</div>
+                        <div class="metric"><b>Model:</b> {{ brain_model_method }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if lung_prediction is defined %}
+                <div class="panel glass">
+                    <h2>Lung Report</h2>
+                    <div class="metrics">
+                        <div class="metric"><b>Prediction:</b> {{ lung_prediction }}</div>
+                        <div class="metric"><b>Confidence:</b> {{ lung_confidence }} %</div>
+                        <div class="metric"><b>Risk Score:</b> {{ lung_risk_score }} / 100</div>
+                        <div class="metric"><b>Model:</b> {{ lung_model_method }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if liver_prediction is defined %}
+                <div class="panel glass">
+                    <h2>Liver Report</h2>
+                    <div class="metrics">
+                        <div class="metric"><b>Prediction:</b> {{ liver_prediction }}</div>
+                        <div class="metric"><b>Confidence:</b> {{ liver_confidence }} %</div>
+                        <div class="metric"><b>Risk Score:</b> {{ liver_risk_score }} / 100</div>
+                        <div class="metric"><b>Model:</b> {{ liver_model_method }}</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
-{% if tumor_percentage is defined %}
-<hr>
-<h2>Analysis Report</h2>
-<p><b>Tumor Percentage:</b> {{ tumor_percentage }} %</p>
-<p><b>Severity Level:</b> {{ severity }}</p>
-{% endif %}
 
+    <script>
+        (function () {
+            var modeInput = document.getElementById("authMode");
+            var authButtons = document.querySelectorAll(".auth-btn");
+            var submitBtn = document.getElementById("authSubmitBtn");
+            if (modeInput && authButtons.length && submitBtn) {
+                authButtons.forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        authButtons.forEach(function (item) { item.classList.remove("active"); });
+                        btn.classList.add("active");
+                        var mode = btn.getAttribute("data-mode");
+                        modeInput.value = mode;
+                        submitBtn.textContent = mode === "register" ? "Register Account" : "Secure Login";
+                    });
+                });
+            }
+
+            var fullscreenBtn = document.getElementById("fullscreenBtn");
+            var vizStage = document.getElementById("vizStage");
+            if (fullscreenBtn && vizStage) {
+                fullscreenBtn.addEventListener("click", function () {
+                    if (!document.fullscreenElement) {
+                        vizStage.requestFullscreen();
+                    } else {
+                        document.exitFullscreen();
+                    }
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
-
